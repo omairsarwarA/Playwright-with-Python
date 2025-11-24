@@ -1,0 +1,19 @@
+name: Push to GitLab
+
+# Workflow tab trigger hoga jab main branch me push ho
+on:
+  push:
+    branches:
+      - main   # apni branch ka naam yahan daalein
+
+jobs:
+  push-to-gitlab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Push to GitLab
+        run: |
+          git remote add gitlab https://devnerdqa:${{ secrets.GITLAB_PAT }}@gitlab.com/devnerdqa/playwright_with_python.git
+          git push gitlab main --force
