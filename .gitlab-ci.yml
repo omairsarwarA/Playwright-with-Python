@@ -1,0 +1,28 @@
+stages:
+  - test
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+default:
+  image: python:3.11
+  before_script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    - playwright install
+
+test_ui:
+  stage: test
+  script:
+    - pytest tests/ui --maxfail=1 --disable-warnings -q
+  artifacts:
+    when: always
+    paths:
+      - tests/ui/screenshots/
+      - tests/ui/videos/
+    expire_in: 1 week
+
+test_api:
+  stage: test
+  script:
+    - pytest tests/api --maxfail=1 --disable-warnings -q
