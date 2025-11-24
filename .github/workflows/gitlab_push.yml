@@ -1,20 +1,30 @@
 name: Push to GitLab
 
-# Workflow tab trigger hoga jab main branch me push ho
 on:
   push:
     branches:
-      - main   # apni branch ka naam yahan daalein
+      - main  # default branch, change if needed
 
 jobs:
   push-to-gitlab:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code from GitHub
         uses: actions/checkout@v3
 
-      - name: Push to GitLab
+      - name: Set Git author dynamically
         run: |
-          git remote add gitlab https://devnerdqa:${{ secrets.GITLAB_PAT }}@gitlab.com/devnerdqa/playwright_with_python.git
+          # Use GitHub commit author for GitLab push
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-          git push gitlab main --force
+      - name: Push code to GitLab
+        env:
+          GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
+        run: |
+          git remote add gitlab https://devnerdqa:${GITLAB_PAT}@gitlab.com/devnerdqa/playwright_with_python.git
+          git fetch gitlab
+          git push gitlab HEAD:${{ github.ref_name }} --force
+
+      - name: Confirm GitLab push
+        run: echo "Code pushed to GitLab successfully!"
