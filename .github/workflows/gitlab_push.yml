@@ -16,4 +16,5 @@ jobs:
       - name: Push to GitLab
         run: |
           git remote add gitlab https://devnerdqa:${{ secrets.GITLAB_PAT }}@gitlab.com/devnerdqa/playwright_with_python.git
+
           git push gitlab main --force
